@@ -25,56 +25,56 @@ GAME RULES:
 
 //document.querySelector('#current-' + activePlayer).textContent = dice;
 //document.querySelector('#current-' + activePlayer).innerHTML = '<em>' + dice + '</em>';
+//
+
 var scores, roundScore, activePlayer;
-init()
+var gamePlaying
+//state variable that game is playing
 
-
-
-
-
+init();
 
 document.querySelector('.btn-roll').addEventListener('click', function() {
-   
-    //1. we need a random number 
-    var dice = Math.floor(Math.random() * 6 ) + 1;
-    console.log(dice);
-    //2 display the result
-    var diceDOM = document.querySelector('.dice');
-    diceDOM.style.display = 'block';
-    diceDOM.src = 'dice-' + dice + '.png';
-    //3. Update the round score IF the rolled number was NOT a 1
-    if(dice !== 1)  {
-        //add score
-        roundScore += dice;
-        document.querySelector('#current-' + activePlayer).textContent = roundScore;
-    } else {
-         //next player
-    nextPlayer();
-        
-
+   if(gamePlaying) {
+        //1. we need a random number 
+        var dice = Math.floor(Math.random() * 6 ) + 1;
+        console.log(dice);
+        //2 display the result
+        var diceDOM = document.querySelector('.dice');
+        diceDOM.style.display = 'block';
+        diceDOM.src = 'dice-' + dice + '.png';
+        //3. Update the round score IF the rolled number was NOT a 1
+        if(dice !== 1)  {
+            //add score
+            roundScore += dice;
+            document.querySelector('#current-' + activePlayer).textContent = roundScore;
+        } else {
+            //next player
+        nextPlayer();
+     }
     }
 });
 //new listener for hold button
 document.querySelector('.btn-hold').addEventListener('click', function() {
     //add current score to GLOBAL score
-    scores[activePlayer] += roundScore;
+    if(gamePlaying) {
+        scores[activePlayer] += roundScore;
 
-    //update the UI
-    document.querySelector('#score-' + activePlayer).textContent = scores[activePlayer];
- 
-    //check if player won the game
-    if(scores[activePlayer] >= 10) {
-        document.querySelector('#name-' + activePlayer).textContent = 'Winner!';
-        document.querySelector('.dice').style.display = 'none';
-        document.querySelector('.player-' + activePlayer + '-panel').classList.add('winner');
-        document.querySelector('.player-' + activePlayer + '-panel').classList.remove('active');
-
-    } else {
-        //next player
-       nextPlayer();
+        //update the UI
+        document.querySelector('#score-' + activePlayer).textContent = scores[activePlayer];
+     
+        //check if player won the game
+        if(scores[activePlayer] >= 100) {
+            document.querySelector('#name-' + activePlayer).textContent = 'Winner!';
+            document.querySelector('.dice').style.display = 'none';
+            document.querySelector('.player-' + activePlayer + '-panel').classList.add('winner');
+            document.querySelector('.player-' + activePlayer + '-panel').classList.remove('active');
+            gamePlaying = false;
+        } else {
+            //next player
+           nextPlayer();
+        }  
     }
 
-       
 });
 
 //DRY thats why we do new function nextPlayer which we can use after without repeating ourself
@@ -100,7 +100,7 @@ function init() {
     scores = [0,0];
     activePlayer = 0;
     roundScore = 0;
-
+    gamePlaying = true;
     document.querySelector('.dice').style.display = 'none';
     document.getElementById('score-0').textContent = '0';
     document.getElementById('score-1').textContent = '0';
